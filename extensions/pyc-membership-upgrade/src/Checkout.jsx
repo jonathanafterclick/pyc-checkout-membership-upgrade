@@ -4,6 +4,9 @@ import { useState } from "preact/hooks";
 
 const SELLING_PLAN_ID = "gid://shopify/SellingPlan/1822752864";
 
+const TEST_ATTRIBUTE_KEY = "pyc_membership_checkout_test";
+const TEST_VARIANT_VALUE = "variant";
+
 const ELIGIBLE_TICKET_PRODUCT_IDS = [
   "gid://shopify/Product/7691296505952",
   "gid://shopify/Product/7599940698208",
@@ -52,6 +55,12 @@ export default async () => {
 
 function Extension() {
   const [checked, setChecked] = useState(false);
+
+  const testVariant = getCartAttribute(TEST_ATTRIBUTE_KEY);
+
+  if (testVariant !== TEST_VARIANT_VALUE) {
+    return null;
+  }
 
   const customer = shopify?.buyerIdentity?.customer?.value;
   const isLoggedIn = Boolean(customer?.id);
@@ -158,4 +167,12 @@ function Extension() {
       </s-grid>
     </s-box>
   );
+}
+
+function getCartAttribute(key) {
+  const attributes = shopify?.attributes?.value || [];
+
+  const attribute = attributes.find((item) => item.key === key);
+
+  return attribute?.value || "";
 }
